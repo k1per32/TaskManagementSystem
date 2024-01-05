@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/postgres
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+    password: postgresql
+  jpa:
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8082/realms/TaskManagementSystem/protocol/openid-connect/certs
+  liquibase:
+    liquibase-schema: keycloak
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: keycloak
+server:
+  port: 8081
+keycloak:
+  realm: TaskManagementSystem
+  auth-server-url: http://localhost:8082
+  ssl-required: external
+  resource: author_client
+  use-resource-role-mappings: true
+  bearer-only: true
+  authority-prefix: ROLE_
+  client-secret: fhSyn8LOD1lyEd7wpu1FC0KXBMI1jpcD
+
+
+
+

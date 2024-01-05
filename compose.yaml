@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgresql
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "5432:5432"
+
+  keycloak:
+    image: bitnami/keycloak
+    ports:
+      - "8082:8080"
+    environment:
+      - KEYCLOAK_DATABASE_HOST=host.docker.internal
+      - KEYCLOAK_CREATE_ADMIN_USER=true
+      - KEYCLOAK_DATABASE_NAME=postgres
+      - KEYCLOAK_DATABASE_USER=postgres
+      - KEYCLOAK_DATABASE_PASSWORD=postgresql
+      - KEYCLOAK_DATABASE_SCHEMA=keycloak
+    depends_on:
+      - db
+    volumes:
+      - /path/to/init-scripts:/docker-entrypoint-initdb.d
+  backend:
+    ports:
+      - "8080:8080"
+    image: k1per32/task_management_system
+    environment:
+      DATASOURCE_HOST: host.docker.internal
